@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Cute Animated Gift Box</title>
+  <style>
+    body, html {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      font-family: 'Comic Sans MS', cursive, sans-serif;
+      overflow: hidden;
+    }
+
+    .page {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      background: linear-gradient(to bottom right, #cceeff, #ffe6f0);
+      z-index: 10;
+    }
+
+    .cloud-text {
+      font-size: 2rem;
+      color: #ff3399;
+      text-align: center;
+      opacity: 0;
+      animation: fadeIn 3s forwards;
+    }
+
+    .clouds {
+      position: absolute;
+      top: -5%;
+      width: 100%;
+      height: 370px;
+      background: url('https://media.tenor.com/N2zrXlml-qYAAAAi/christmas-birthday.gif') repeat-x;
+      animation: moveClouds 30s linear infinite;
+      z-index: -1;
+    }
+
+    @keyframes fadeIn {
+      to { opacity: 1; }
+    }
+
+    @keyframes moveClouds {
+      from { background-position: 0 0; }
+      to { background-position: 1000px 0; }
+    }
+
+    .choice-buttons {
+      margin-top: 30px;
+      display: flex;
+      gap: 20px;
+    }
+
+    .choice-buttons button {
+      padding: 10px 20px;
+      font-size: 1rem;
+      background-color: #ff66b2;
+      color: white;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+
+    .choice-buttons button:hover {
+      background-color: #ff3385;
+    }
+
+    .gift-page {
+      display: none;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      height: 100vh;
+      background: linear-gradient(to bottom right, #ffe6f0, #e6f7ff);
+      padding: 20px;
+      box-sizing: border-box;
+      position: relative;
+      z-index: 15;
+    }
+
+    .box-container {
+      position: relative;
+      width: 200px;
+      height: 200px;
+      cursor: pointer;
+      transition: transform 0.3s ease-in-out;
+      margin-bottom: 40px;
+    }
+
+    .box-container:hover {
+      transform: scale(1.1);
+    }
+
+    .lid {
+      position: absolute;
+      width: 100%;
+      height: 40%;
+      background: #ff69b4;
+      border-radius: 10px 10px 0 0;
+      z-index: 3;
+      transition: transform 0.8s ease-in-out;
+    }
+
+    .box {
+      position: absolute;
+      top: 40%;
+      width: 100%;
+      height: 60%;
+      background: #ff1493;
+      border-radius: 0 0 10px 10px;
+      z-index: 2;
+    }
+
+    .ribbon {
+      position: absolute;
+      width: 20px;
+      height: 100%;
+      background: gold;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 4;
+    }
+
+    .ribbon-top {
+      position: absolute;
+      width: 100%;
+      height: 20px;
+      background: gold;
+      top: 20%;
+      left: 0;
+      z-index: 4;
+    }
+
+    .gift {
+      position: relative;
+      font-size: 1.8rem;
+      opacity: 0;
+      transition: opacity 0.6s ease-in-out;
+      max-width: 300px;
+      text-align: center;
+      padding: 0 10px;
+      line-height: 1.3;
+      margin: 0 auto;
+      z-index: 1;
+    }
+
+    .sparks {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 5;
+    }
+
+    .spark, .heart {
+      position: absolute;
+      width: 20px;
+      height: 20px;
+      font-size: 20px;
+      animation: explode 1s ease-out forwards;
+    }
+
+    @keyframes explode {
+      0% { transform: scale(1) translate(0, 0); opacity: 1; }
+      100% { transform: scale(1.5) translate(var(--x), var(--y)); opacity: 0; }
+    }
+
+    .opened .lid {
+      transform: rotateX(120deg) translateY(-50px);
+    }
+
+    .opened .gift {
+      opacity: 1;
+    }
+
+    .opened .box,
+    .opened .lid,
+    .opened .ribbon,
+    .opened .ribbon-top {
+      opacity: 0;
+    }
+
+    #countdown {
+      position: fixed;
+      bottom: 10px;
+      width: 100%;
+      text-align: center;
+      font-size: 1.4rem;
+      font-weight: bold;
+      color: #ff3399;
+      font-family: 'Comic Sans MS', cursive, sans-serif;
+      user-select: none;
+      background: rgba(255, 255, 255, 0.6);
+      padding: 5px 0;
+      z-index: 9999;
+    }
+
+    #player {
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="page" id="introPage">
+    <div class="cloud-text">YOU HAVE A GIFT, WOULD YOU LIKE TO OPEN IT?</div>
+    <div class="choice-buttons">
+      <button onclick="showGiftPage()">Yes</button>
+      <button onclick="showGiftPage()">Yes</button>
+    </div>
+    <div class="clouds"></div>
+  </div>
+
+  <div class="gift-page" id="giftPage">
+    <div class="box-container" onclick="openBox(this)">
+      <div class="lid"></div>
+      <div class="box"></div>
+      <div class="ribbon"></div>
+      <div class="ribbon-top"></div>
+      <div class="gift">🎁 sorry this one's not real, but definitely a real one next huuhdiin bayr q-q</div>
+      <div class="sparks"></div>
+    </div>
+    <div id="countdown"></div>
+  </div>
+
+  <!-- YouTube player (hidden) -->
+  <div id="player"></div>
+
+  <script>
+    let countdownInterval;
+    let player;
+    let hasPlayed = false;
+
+    function showGiftPage() {
+      document.getElementById('introPage').style.display = 'none';
+      document.getElementById('giftPage').style.display = 'flex';
+      startCountdown();
+
+      if (player && !hasPlayed) {
+        player.playVideo();
+        hasPlayed = true;
+      }
+    }
+
+    function openBox(container) {
+      if (container.classList.contains('opened')) return;
+
+      container.classList.add('opened');
+      const sparks = container.querySelector('.sparks');
+
+      for (let i = 0; i < 30; i++) {
+        const spark = document.createElement('div');
+        spark.classList.add('spark');
+        spark.textContent = '✨';
+        spark.style.setProperty('--x', `${Math.random() * 300 - 150}px`);
+        spark.style.setProperty('--y', `${Math.random() * 300 - 150}px`);
+        spark.style.left = '50%';
+        spark.style.top = '50%';
+        sparks.appendChild(spark);
+
+        const heart = document.createElement('div');
+        heart.classList.add('heart');
+        heart.textContent = '❤️';
+        heart.style.setProperty('--x', `${Math.random() * 300 - 150}px`);
+        heart.style.setProperty('--y', `${Math.random() * 300 - 150}px`);
+        heart.style.left = '50%';
+        heart.style.top = '50%';
+        sparks.appendChild(heart);
+
+        setTimeout(() => {
+          spark.remove();
+          heart.remove();
+        }, 1000);
+      }
+
+      if (player && !hasPlayed) {
+        player.playVideo();
+        hasPlayed = true;
+      }
+    }
+
+    function startCountdown() {
+      const countdownElem = document.getElementById('countdown');
+
+      function updateCountdown() {
+        const now = new Date();
+        let year = now.getFullYear();
+        const nextJuneFirst = new Date(year, 5, 1, 0, 0, 0);
+
+        if (now >= nextJuneFirst) {
+          nextJuneFirst.setFullYear(year + 1);
+        }
+
+        const diff = nextJuneFirst - now;
+
+        if (diff <= 0) {
+          countdownElem.textContent = "🎉 It's June 1st! 🎉";
+          clearInterval(countdownInterval);
+          return;
+        }
+
+        const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+        const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
+        const minutes = Math.floor((diff / (1000 * 60)) % 60);
+        const seconds = Math.floor((diff / 1000) % 60);
+
+        countdownElem.textContent = `Countdown to next June 1st: ${days}d ${hours}h ${minutes}m ${seconds}s`;
+      }
+
+      updateCountdown();
+      countdownInterval = setInterval(updateCountdown, 1000);
+    }
+
+    // Load YouTube IFrame API
+    let tag = document.createElement('script');
+    tag.src = "https://www.youtube.com/iframe_api";
+    document.body.appendChild(tag);
+
+    // Create YouTube player
+    function onYouTubeIframeAPIReady() {
+      player = new YT.Player('player', {
+        height: '0',
+        width: '0',
+        videoId: 'p93nyFK-9YA', // Replace with your desired YouTube video ID
+        playerVars: {
+          autoplay: 0,
+          controls: 0,
+          modestbranding: 1,
+          rel: 0,
+        },
+        events: {
+          'onReady': event => {
+            // Ready to play
+          }
+        }
+      });
+    }
+  </script>
+</body>
+</html>
+
